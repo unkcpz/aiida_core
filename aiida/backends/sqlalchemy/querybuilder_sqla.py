@@ -346,22 +346,22 @@ class QueryBuilderImplSQLA(QueryBuilderInterface):
         def cast_according_to_type(path_in_json, value):
             if isinstance(value, bool):
                 type_filter = jsonb_typeof(path_in_json) == 'boolean'
-                casted_entity = path_in_json.cast(Boolean)
+                casted_entity = path_in_json.astext.cast(Boolean)
             elif isinstance(value, (int, float)):
                 type_filter = jsonb_typeof(path_in_json) == 'number'
-                casted_entity = path_in_json.cast(Float)
+                casted_entity = path_in_json.astext.cast(Float)
             elif isinstance(value, dict) or value is None:
                 type_filter = jsonb_typeof(path_in_json) == 'object'
-                casted_entity = path_in_json.cast(JSONB)  # BOOLEANS?
+                casted_entity = path_in_json.astext.cast(JSONB)  # BOOLEANS?
             elif isinstance(value, dict):
                 type_filter = jsonb_typeof(path_in_json) == 'array'
-                casted_entity = path_in_json.cast(JSONB)  # BOOLEANS?
+                casted_entity = path_in_json.astext.cast(JSONB)  # BOOLEANS?
             elif isinstance(value, (str, unicode)):
                 type_filter = jsonb_typeof(path_in_json) == 'string'
                 casted_entity = path_in_json.astext
             elif value is None:
                 type_filter = jsonb_typeof(path_in_json) == 'null'
-                casted_entity = path_in_json.cast(JSONB)  # BOOLEANS?
+                casted_entity = path_in_json.astext.cast(JSONB)  # BOOLEANS?
             elif isinstance(value, datetime):
                 # type filter here is filter whether this attributes stores
                 # a string and a filter whether this string
@@ -454,17 +454,17 @@ class QueryBuilderImplSQLA(QueryBuilderInterface):
         if cast is None:
             entity = entity
         elif cast == 'f':
-            entity = entity.cast(Float)
+            entity = entity.astext.cast(Float)
         elif cast == 'i':
-            entity = entity.cast(Integer)
+            entity = entity.astext.cast(Integer)
         elif cast == 'b':
-            entity = entity.cast(Boolean)
+            entity = entity.astext.cast(Boolean)
         elif cast == 't':
             entity = entity.astext
         elif cast == 'j':
-            entity = entity.cast(JSONB)
+            entity = entity.astext.cast(JSONB)
         elif cast == 'd':
-            entity = entity.cast(DateTime)
+            entity = entity.astext.cast(DateTime)
         else:
             raise InputValidationError(
                 "Unkown casting key {}".format(cast)
