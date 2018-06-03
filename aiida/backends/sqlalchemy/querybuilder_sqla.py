@@ -18,7 +18,6 @@ from sqlalchemy.sql.expression import cast, ColumnClause
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.sql.elements import Cast, Label
 from sqlalchemy_utils.types.choice import Choice
-from sqlalchemy.sql.elements import Cast
 from sqlalchemy.sql.expression import FunctionElement
 from sqlalchemy.ext.compiler import compiles
 
