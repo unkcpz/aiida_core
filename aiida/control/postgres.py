@@ -15,6 +15,7 @@ functionality from within python without knowing details about how postgres is
 installed by default on various systems. If the postgres setup is not the
 default installation, additional information needs to be provided.
 """
+import os
 try:
     import subprocess32 as subprocess
 except ImportError:
@@ -342,7 +343,8 @@ def _pg_execute_sh(command, user='postgres', **kwargs):
             escape_for_bash(command), options=options)
     ]
     sudo_su_psql = sudo_cmd + su_cmd + psql_cmd
-    result = subprocess.check_output(sudo_su_psql, **kwargs)
+    result = subprocess.check_output(
+        sudo_su_psql, preexec_fn=os.setsid, **kwargs)
 
     if isinstance(result, str):
         result = result.strip().split('\n')
