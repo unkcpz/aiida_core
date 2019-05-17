@@ -12,15 +12,13 @@ install: true
 script: echo "docs"
 
 after_success:
-  - .ci/setup_profiles.sh
-  - .ci/before_script.sh
   - .ci/transifex_upload.sh
 # cache: pip
 #
-services:
-    - rabbitmq
-    - postgresql
-    - docker
+# services:
+#     - rabbitmq
+#     - postgresql
+#     - docker
 #
 # addons:
 #     # make sure the path in .ci/test_script.sh matches the version requested here
@@ -39,29 +37,29 @@ services:
 #             - dvidvi
 #             - graphviz
 #
-before_install:
-    # We need to replace `TRAVIS_HOME` with `HOME` because the former won't be set when SSH'ing to localhost on the
-    # the Travis machine, causing certain scripts sourced in the `.bashrc` to fail
-    - sed -i 's/TRAVIS_HOME/HOME/g' /home/travis/.travis/job_stages
-    # This is needed for the SSH tests (being able to ssh to localhost)
-    # And will also be used for the docker test
-    - ssh-keygen -t rsa -N "" -f "${HOME}/.ssh/id_rsa"
-    - cp "${HOME}/.ssh/id_rsa.pub" "${HOME}/.ssh/authorized_keys"
-    - ssh-keyscan -H localhost >> "${HOME}/.ssh/known_hosts"
-
-    # Needed to have 'locate' work properly
-    - sudo updatedb
-    - .ci/prep_ssh.sh
-
-    # Build the docker image if needed
-    - .ci/before_install.sh
-
-install:
-    # Upgrade pip setuptools and wheel to be able to run the next command
-    - pip install --upgrade pip wheel setuptools coveralls
-    # Install AiiDA with some optional dependencies
-    - if [ "$TEST_TYPE" == "docs" ]; then pip install . && pip install -r docs/requirements_for_rtd.txt; else pip install .[all]; fi
-
+# before_install:
+#     # We need to replace `TRAVIS_HOME` with `HOME` because the former won't be set when SSH'ing to localhost on the
+#     # the Travis machine, causing certain scripts sourced in the `.bashrc` to fail
+#     - sed -i 's/TRAVIS_HOME/HOME/g' /home/travis/.travis/job_stages
+#     # This is needed for the SSH tests (being able to ssh to localhost)
+#     # And will also be used for the docker test
+#     - ssh-keygen -t rsa -N "" -f "${HOME}/.ssh/id_rsa"
+#     - cp "${HOME}/.ssh/id_rsa.pub" "${HOME}/.ssh/authorized_keys"
+#     - ssh-keyscan -H localhost >> "${HOME}/.ssh/known_hosts"
+#
+#     # Needed to have 'locate' work properly
+#     - sudo updatedb
+#     - .ci/prep_ssh.sh
+#
+#     # Build the docker image if needed
+#     - .ci/before_install.sh
+#
+# install:
+#     # Upgrade pip setuptools and wheel to be able to run the next command
+#     - pip install --upgrade pip wheel setuptools coveralls
+#     # Install AiiDA with some optional dependencies
+#     - if [ "$TEST_TYPE" == "docs" ]; then pip install . && pip install -r docs/requirements_for_rtd.txt; else pip install .[all]; fi
+#
 # env:
 #     ## Build matrix to test both backends, and the docs
 #     ## I still let it create the test backend for django
