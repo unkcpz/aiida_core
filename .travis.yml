@@ -16,27 +16,27 @@ after_success:
 cache: pip
 
 services:
-    # - rabbitmq
+    - rabbitmq
     - postgresql
     - docker
-#
-# addons:
-#     # make sure the path in .ci/test_script.sh matches the version requested here
-#     postgresql: "9.6"
-#
-#     apt:
-#         packages:
-#             - postgresql-server-dev-9.6
-#             - texlive-base
-#             - texlive-generic-recommended
-#             - texlive-fonts-recommended
-#             - texlive-latex-base
-#             - texlive-latex-recommended
-#             - texlive-latex-extra
-#             - dvipng
-#             - dvidvi
-#             - graphviz
-#
+
+addons:
+    # make sure the path in .ci/test_script.sh matches the version requested here
+    postgresql: "9.6"
+
+    apt:
+        packages:
+            - postgresql-server-dev-9.6
+            - texlive-base
+            - texlive-generic-recommended
+            - texlive-fonts-recommended
+            - texlive-latex-base
+            - texlive-latex-recommended
+            - texlive-latex-extra
+            - dvipng
+            - dvidvi
+            - graphviz
+
 # before_install:
 #     # We need to replace `TRAVIS_HOME` with `HOME` because the former won't be set when SSH'ing to localhost on the
 #     # the Travis machine, causing certain scripts sourced in the `.bashrc` to fail
