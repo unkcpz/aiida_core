@@ -131,7 +131,7 @@ jobs:
           script: skip
           # env: ignore
           env:
-            - TRANSIFEX_PASSWORD="api"
+            - TRANSIFEX_USER="api"
           before_deploy:
             - echo "We'll deploy $TRAVIS_TAG"
           after_deploy:
