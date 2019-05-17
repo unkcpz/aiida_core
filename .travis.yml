@@ -83,8 +83,14 @@ jobs:
     include:
         - stage: deploy
           if: "tag =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+(a|b|rc)?[0-9]*$"
-          services: ignore
-          addons: skip
+          services: postgresql
+          addons:
+            postgresql: "9.6"
+            apt:
+                packages:
+                    - postgresql-server-dev-9.6
+          after_success:
+            - .ci/transifex_upload.sh
           python: 3.6
           before_install: skip
           install: skip
@@ -106,19 +112,3 @@ jobs:
                   repo: aiidateam/aiida_core
                   all_branches: true
                   tags: true
-        - stage: docs_update
-          if: branch=ci_transifex-test
-          services: postgresql
-          addons:
-            postgresql: "9.6"
-            apt:
-                packages:
-                    - postgresql-server-dev-9.6
-          python: 3.6
-          before_install: skip
-          install: skip
-          before_script: skip
-          script: skip
-          env: ignore
-          after_success:
-            - .ci/transifex_upload.sh
