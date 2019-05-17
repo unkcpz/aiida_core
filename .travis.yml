@@ -115,7 +115,8 @@ jobs:
           addons: skip
           python: 3.6
           before_install: skip
-          install: skip
+          install:
+            - pip install .[docs, testing]
           before_script: skip
           after_success:
             - cd docs
@@ -125,10 +126,12 @@ jobs:
             - pip install transifex-client sphinx
             - sudo echo $'[https://www.transifex.com]\nhostname = https://www.transifex.com\nusername = '"$TRANSIFEX_USER"$'\npassword = '"$TRANSIFEX_PASSWORD"$'\n' > ~/.transifexrc
             - make gettext
-            - rm "build/locale/apidoc.pot"
+            - rm build/locale/apidoc.pot
             - tx push -s
           script: skip
-          env: ignore
+          # env: ignore
+          env:
+            - TRANSIFEX_PASSWORD="api"
           before_deploy:
             - echo "We'll deploy $TRAVIS_TAG"
           after_deploy:
