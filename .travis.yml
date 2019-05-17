@@ -1,13 +1,13 @@
 dist: trusty
 sudo: required
 
-language: python
-
-python:
-    - "2.7"
-    - "3.6"
-
-cache: pip
+# language: python
+#
+# python:
+#     - "2.7"
+#     - "3.6"
+#
+# cache: pip
 
 # services:
 #     - rabbitmq
@@ -48,12 +48,12 @@ cache: pip
     # # Build the docker image if needed
     # - .ci/before_install.sh
 
-install:
-    # Upgrade pip setuptools and wheel to be able to run the next command
-    # - pip install --upgrade pip wheel setuptools coveralls
-    # # Install AiiDA with some optional dependencies
-    # - if [ "$TEST_TYPE" == "docs" ]; then pip install . && pip install -r docs/requirements_for_rtd.txt; else pip install .[all]; fi
-    true
+# install:
+#     # Upgrade pip setuptools and wheel to be able to run the next command
+#     # - pip install --upgrade pip wheel setuptools coveralls
+#     # # Install AiiDA with some optional dependencies
+#     # - if [ "$TEST_TYPE" == "docs" ]; then pip install . && pip install -r docs/requirements_for_rtd.txt; else pip install .[all]; fi
+#     true
 
 # env:
     ## Build matrix to test both backends, and the docs
@@ -71,15 +71,15 @@ install:
     # - .ci/before_script.sh
 
 # script: .ci/test_script.sh
-script: echo "docs"
+# script: echo "docs"
 
 
 # after_success:
   # upload coverage report to coveralls.io
   # - if [ "$TEST_TYPE" == "tests" ]; then coveralls; fi
 
-git:
-  depth: 3
+# git:
+#   depth: 3
 
 jobs:
     include:
