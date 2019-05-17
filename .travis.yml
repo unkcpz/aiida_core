@@ -112,7 +112,7 @@ jobs:
                   repo: aiidateam/aiida_core
                   all_branches: true
                   tags: true
-        - stage: test
+        - stage: docs_update
           if: branch=ci_transifex-test
           services: postgresql
           addons:
