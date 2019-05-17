@@ -5,12 +5,8 @@ set -ev
 
 # setup profile
 # Create the main database
-TEST_AIIDA_BACKEND="django"
+if [ -e ~/.bashrc ] ; then source ~/.bashrc ; fi
 PSQL_COMMAND="CREATE DATABASE $TEST_AIIDA_BACKEND ENCODING \"UTF8\" LC_COLLATE=\"en_US.UTF-8\" LC_CTYPE=\"en_US.UTF-8\" TEMPLATE=template0;"
-psql -h localhost -c "${PSQL_COMMAND}" -U postgres -w
-
-# Create the test database
-PSQL_COMMAND="CREATE DATABASE test_$TEST_AIIDA_BACKEND ENCODING \"UTF8\" LC_COLLATE=\"en_US.UTF-8\" LC_CTYPE=\"en_US.UTF-8\" TEMPLATE=template0;"
 psql -h localhost -c "${PSQL_COMMAND}" -U postgres -w
 
 # Setup the main profile
@@ -19,13 +15,6 @@ verdi setup --profile $TEST_AIIDA_BACKEND \
     --db-engine 'postgresql_psycopg2' --db-backend=$TEST_AIIDA_BACKEND --db-host="localhost" --db-port=5432 \
     --db-name="$TEST_AIIDA_BACKEND" --db-username=postgres --db-password='' \
     --repository="/tmp/repository_${TEST_AIIDA_BACKEND}/" --non-interactive
-
-# Setup the test profile
-verdi setup --profile test_$TEST_AIIDA_BACKEND \
-    --email="aiida@localhost" --first-name=AiiDA --last-name=test --institution="AiiDA Team" --password 'secret' \
-    --db-engine 'postgresql_psycopg2' --db-backend=$TEST_AIIDA_BACKEND --db-host="localhost" --db-port=5432 \
-    --db-name="test_$TEST_AIIDA_BACKEND" --db-username=postgres --db-password='' \
-     --repository="/tmp/test_repository_test_${TEST_AIIDA_BACKEND}/" --non-interactive
 
 # Set the main profile as the default
 verdi profile setdefault $TEST_AIIDA_BACKEND
