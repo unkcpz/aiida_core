@@ -78,7 +78,7 @@ script: echo "docs"
 #   # upload coverage report to coveralls.io
 #   - if [ "$TEST_TYPE" == "tests" ]; then coveralls; fi
 env:
-  TRANSIFEX_USER="api"
+  - TRANSIFEX_USER="api"
 after_success:
   # - pip install virtualenv
   # - virtualenv ~/env
