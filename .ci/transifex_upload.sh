@@ -3,11 +3,6 @@
 # Be verbose, and stop with error as soon there's one
 set -ev
 
-# setup profile
-# Create the main database
-TEST_AIIDA_BACKEND="django"
-PSQL_COMMAND="CREATE DATABASE $TEST_AIIDA_BACKEND ENCODING \"UTF8\" LC_COLLATE=\"en_US.UTF-8\" LC_CTYPE=\"en_US.UTF-8\" TEMPLATE=template0;"
-psql -h localhost -c "${PSQL_COMMAND}" -U postgres -w
 
 pip install virtualenv
 virtualenv ~/env
@@ -15,6 +10,10 @@ source ~/env/bin/activate
 pip install transifex-client sphinx-intl
 pip install ".[docs,testing]"
 
+# Create the main database
+TEST_AIIDA_BACKEND="django"
+PSQL_COMMAND="CREATE DATABASE $TEST_AIIDA_BACKEND ENCODING \"UTF8\" LC_COLLATE=\"en_US.UTF-8\" LC_CTYPE=\"en_US.UTF-8\" TEMPLATE=template0;"
+psql -h localhost -c "${PSQL_COMMAND}" -U postgres -w
 # Setup the main profile
 verdi setup --profile $TEST_AIIDA_BACKEND \
     --email="aiida@localhost" --first-name=AiiDA --last-name=test --institution="AiiDA Team" --password 'secret' \
