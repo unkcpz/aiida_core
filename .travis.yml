@@ -48,12 +48,11 @@ cache: pip
 #     # Build the docker image if needed
 #     - .ci/before_install.sh
 
-install:
+install: true
     # # Upgrade pip setuptools and wheel to be able to run the next command
     # - pip install --upgrade pip wheel setuptools coveralls
     # # Install AiiDA with some optional dependencies
     # - if [ "$TEST_TYPE" == "docs" ]; then pip install . && pip install -r docs/requirements_for_rtd.txt; else pip install .[all]; fi
-    true
 
 # env:
 #     ## Build matrix to test both backends, and the docs
@@ -75,9 +74,9 @@ script:
   - echo "docs"
 
 
-# after_success:
-#   # upload coverage report to coveralls.io
-#   - if [ "$TEST_TYPE" == "tests" ]; then coveralls; fi
+after_success:
+  # upload coverage report to coveralls.io
+  - if [ "$TEST_TYPE" == "tests" ]; then coveralls; fi
 
 git:
   depth: 3
