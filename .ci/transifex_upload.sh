@@ -28,7 +28,7 @@ verdi profile setdefault $TEST_AIIDA_BACKEND
 verdi config runner.poll.interval 0
 
 # Generate pot file and upload to transifex platform
-TRANSIFEX_PROJECT_NAME="aiida-zh_cn"
+TRANSIFEX_PROJECT_NAME="aiida-core"
 sphinx-build -b gettext docs/source locale
 tx init --no-interactive
 sphinx-intl update-txconfig-resources --pot-dir locale --transifex-project-name ${TRANSIFEX_PROJECT_NAME}
