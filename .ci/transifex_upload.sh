@@ -5,8 +5,6 @@ set -ev
 
 # setup profile
 # Create the main database
-# if [ -e ~/.bashrc ] ; then source ~/.bashrc ; fi
-# Create the main database
 TEST_AIIDA_BACKEND="django"
 PSQL_COMMAND="CREATE DATABASE $TEST_AIIDA_BACKEND ENCODING \"UTF8\" LC_COLLATE=\"en_US.UTF-8\" LC_CTYPE=\"en_US.UTF-8\" TEMPLATE=template0;"
 psql -h localhost -c "${PSQL_COMMAND}" -U postgres -w
@@ -28,7 +26,7 @@ TRANSIFEX_USER="api"
 pip install virtualenv
 virtualenv ~/env
 source ~/env/bin/activate
-pip install transifex-client
+pip install transifex-client sphinx-intl
 pip install ".[docs,testing]"
 sphinx-build -b gettext docs/source locale
 tx init --no-interactive
