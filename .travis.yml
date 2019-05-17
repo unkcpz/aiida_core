@@ -27,15 +27,15 @@ addons:
     apt:
         packages:
             - postgresql-server-dev-9.6
-            - texlive-base
-            - texlive-generic-recommended
-            - texlive-fonts-recommended
-            - texlive-latex-base
-            - texlive-latex-recommended
-            - texlive-latex-extra
-            - dvipng
-            - dvidvi
-            - graphviz
+            # - texlive-base
+            # - texlive-generic-recommended
+            # - texlive-fonts-recommended
+            # - texlive-latex-base
+            # - texlive-latex-recommended
+            # - texlive-latex-extra
+            # - dvipng
+            # - dvidvi
+            # - graphviz
 
 # before_install:
 #     # We need to replace `TRAVIS_HOME` with `HOME` because the former won't be set when SSH'ing to localhost on the
