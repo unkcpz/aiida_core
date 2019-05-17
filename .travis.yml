@@ -18,7 +18,7 @@ cache: pip
 services:
     # - rabbitmq
     - postgresql
-    # - docker
+    - docker
 #
 # addons:
 #     # make sure the path in .ci/test_script.sh matches the version requested here
