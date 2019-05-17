@@ -3,6 +3,7 @@
 # Be verbose, and stop with error as soon there's one
 set -ev
 
+TRANSIFEX_USER="api"
 pip install virtualenv
 virtualenv ~/env
 source ~/env/bin/activate

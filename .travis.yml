@@ -10,6 +10,9 @@ python:
 install: true
 
 script: echo "docs"
+
+after_success:
+  - .ci/trnsifex_upload.sh
 # cache: pip
 #
 # services:
