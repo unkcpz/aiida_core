@@ -13,12 +13,12 @@ script: echo "docs"
 
 after_success:
   - .ci/transifex_upload.sh
-cache: pip
+# cache: pip
 
 services:
-    - rabbitmq
+    # - rabbitmq
     - postgresql
-    - docker
+    # - docker
 
 addons:
     # make sure the path in .ci/test_script.sh matches the version requested here
@@ -54,11 +54,11 @@ addons:
 #     # Build the docker image if needed
 #     - .ci/before_install.sh
 #
-install:
+install: skip
     # Upgrade pip setuptools and wheel to be able to run the next command
-    - pip install --upgrade pip wheel setuptools coveralls
+    # - pip install --upgrade pip wheel setuptools coveralls
     # Install AiiDA with some optional dependencies
-    - if [ "$TEST_TYPE" == "docs" ]; then pip install . && pip install -r docs/requirements_for_rtd.txt; else pip install .[all]; fi
+    # - if [ "$TEST_TYPE" == "docs" ]; then pip install . && pip install -r docs/requirements_for_rtd.txt; else pip install .[all]; fi
 #
 # env:
 #     ## Build matrix to test both backends, and the docs
