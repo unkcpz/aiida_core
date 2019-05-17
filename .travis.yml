@@ -122,18 +122,18 @@ jobs:
             - pip install virtualenv
             - virtualenv ~/env
             - source ~/env/bin/activate
-            - pip install transifex-client
+            - pip install transifex-client sphinx
             - sudo echo $'[https://www.transifex.com]\nhostname = https://www.transifex.com\nusername = '"$TRANSIFEX_USER"$'\npassword = '"$TRANSIFEX_PASSWORD"$'\n' > ~/.transifexrc
             - make gettext
-            - rm build/locale/apidoc.pot
+            - rm "build/locale/apidoc.pot"
             - tx push -s
           script: skip
           env: ignore
-          # before_deploy:
-          #   - echo "We'll deploy $TRAVIS_TAG"
-          # after_deploy:
-          #   - echo "Deployed $TRAVIS_TAG"
-          #   - echo "We'll hook up some things in the future"
+          before_deploy:
+            - echo "We'll deploy $TRAVIS_TAG"
+          after_deploy:
+            - echo "Deployed $TRAVIS_TAG"
+            - echo "We'll hook up some things in the future"
           # deploy: &pypi
           #     provider: pypi
           #     skip_existing: true
