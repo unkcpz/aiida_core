@@ -9,6 +9,13 @@ TEST_AIIDA_BACKEND="django"
 PSQL_COMMAND="CREATE DATABASE $TEST_AIIDA_BACKEND ENCODING \"UTF8\" LC_COLLATE=\"en_US.UTF-8\" LC_CTYPE=\"en_US.UTF-8\" TEMPLATE=template0;"
 psql -h localhost -c "${PSQL_COMMAND}" -U postgres -w
 
+TRANSIFEX_USER="api"
+pip install virtualenv
+virtualenv ~/env
+source ~/env/bin/activate
+pip install transifex-client sphinx-intl
+pip install ".[docs,testing]"
+
 # Setup the main profile
 verdi setup --profile $TEST_AIIDA_BACKEND \
     --email="aiida@localhost" --first-name=AiiDA --last-name=test --institution="AiiDA Team" --password 'secret' \
@@ -22,12 +29,6 @@ verdi profile setdefault $TEST_AIIDA_BACKEND
 # Set the polling interval to 0 otherwise the tests take too long
 verdi config runner.poll.interval 0
 
-TRANSIFEX_USER="api"
-pip install virtualenv
-virtualenv ~/env
-source ~/env/bin/activate
-pip install transifex-client sphinx-intl
-pip install ".[docs,testing]"
 sphinx-build -b gettext docs/source locale
 tx init --no-interactive
 sphinx-intl update-txconfig-resources --pot-dir locale --transifex-project-name aiida-zh_cn
