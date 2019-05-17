@@ -9,29 +9,29 @@ python:
 
 cache: pip
 
-services:
-    - rabbitmq
-    - postgresql
-    - docker
+# services:
+#     - rabbitmq
+#     - postgresql
+#     - docker
 
-addons:
-    # make sure the path in .ci/test_script.sh matches the version requested here
-    postgresql: "9.6"
+# addons:
+#     # make sure the path in .ci/test_script.sh matches the version requested here
+#     postgresql: "9.6"
+#
+#     apt:
+#         packages:
+#             - postgresql-server-dev-9.6
+#             - texlive-base
+#             - texlive-generic-recommended
+#             - texlive-fonts-recommended
+#             - texlive-latex-base
+#             - texlive-latex-recommended
+#             - texlive-latex-extra
+#             - dvipng
+#             - dvidvi
+#             - graphviz
 
-    apt:
-        packages:
-            - postgresql-server-dev-9.6
-            - texlive-base
-            - texlive-generic-recommended
-            - texlive-fonts-recommended
-            - texlive-latex-base
-            - texlive-latex-recommended
-            - texlive-latex-extra
-            - dvipng
-            - dvidvi
-            - graphviz
-
-before_install:
+# before_install:
     # # We need to replace `TRAVIS_HOME` with `HOME` because the former won't be set when SSH'ing to localhost on the
     # # the Travis machine, causing certain scripts sourced in the `.bashrc` to fail
     # - sed -i 's/TRAVIS_HOME/HOME/g' /home/travis/.travis/job_stages
@@ -53,8 +53,9 @@ install:
     # - pip install --upgrade pip wheel setuptools coveralls
     # # Install AiiDA with some optional dependencies
     # - if [ "$TEST_TYPE" == "docs" ]; then pip install . && pip install -r docs/requirements_for_rtd.txt; else pip install .[all]; fi
+    true
 
-env:
+# env:
     ## Build matrix to test both backends, and the docs
     ## I still let it create the test backend for django
     ## also when building the docs
@@ -65,14 +66,15 @@ env:
     # - TEST_AIIDA_BACKEND=sqlalchemy TEST_TYPE="tests"
     # - TEST_TYPE="conda"
 
-before_script:
+# before_script:
     # - .ci/setup_profiles.sh
     # - .ci/before_script.sh
 
 # script: .ci/test_script.sh
+script: echo "docs"
 
 
-after_success:
+# after_success:
   # upload coverage report to coveralls.io
   # - if [ "$TEST_TYPE" == "tests" ]; then coveralls; fi
 
