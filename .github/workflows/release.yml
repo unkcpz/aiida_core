@@ -41,7 +41,7 @@ jobs:
 
     - name: Setting transifex configuration and upload pot files
       env:
-        PROJECT_NAME: 'aiida-core'
+        PROJECT_NAME: 'aiida-tutorial-zh'
         USER: ${{ secrets.TRANSIFEX_USER }}
         PASSWD: ${{ secrets.TRANSIFEX_PASSWORD }}
       run: |
