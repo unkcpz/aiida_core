@@ -3,7 +3,7 @@ name: release
 # on:
 #   release:
 #     types: [published, edited]
-on: [push, pull_request]
+on: [push]
 
 jobs:
 
@@ -41,7 +41,7 @@ jobs:
 
     - name: Setting transifex configuration and upload pot files
       env:
-        PROJECT_NAME: 'aiida-tutorial-zh'
+        PROJECT_NAME: aiida-tutorial-zh
         USER: ${{ secrets.TRANSIFEX_USER }}
         PASSWD: ${{ secrets.TRANSIFEX_PASSWORD }}
       run: |
