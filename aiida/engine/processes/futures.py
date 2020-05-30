@@ -9,15 +9,14 @@
 ###########################################################################
 # pylint: disable=cyclic-import
 """Futures that can poll or receive broadcasted messages while waiting for a task to be completed."""
-import tornado.gen
+import asyncio
 
-import plumpy
 import kiwipy
 
 __all__ = ('CalculationFuture',)
 
 
-class CalculationFuture(plumpy.Future):
+class CalculationFuture(asyncio.Future):
     """
     A future that waits for a calculation to complete using both polling and
     listening for broadcast events if possible
@@ -38,7 +37,10 @@ class CalculationFuture(plumpy.Future):
         from aiida.orm import load_node
         from .process import ProcessState
 
-        super().__init__()
+        # create future in specified event loop
+        loop = loop if loop is not None else asyncio.get_event_loop()
+        super().__init__(loop=loop)
+
         assert not (poll_interval is None and communicator is None), 'Must poll or have a communicator to use'
 
         calc_node = load_node(pk=pk)
@@ -58,7 +60,7 @@ class CalculationFuture(plumpy.Future):
 
             # Start polling
             if poll_interval is not None:
-                loop.add_callback(self._poll_calculation, calc_node, poll_interval)
+                asyncio.run_coroutine_threadsafe(self._poll_calculation(calc_node, poll_interval), loop)
 
     def cleanup(self):
         """Clean up the future by removing broadcast subscribers from the communicator if it still exists."""
@@ -67,11 +69,10 @@ class CalculationFuture(plumpy.Future):
             self._filtered = None
             self._communicator = None
 
-    @tornado.gen.coroutine
-    def _poll_calculation(self, calc_node, poll_interval):
+    async def _poll_calculation(self, calc_node, poll_interval):
         """Poll whether the calculation node has reached a terminal state."""
         while not self.done() and not calc_node.is_terminated:
-            yield tornado.gen.sleep(poll_interval)
+            await asyncio.sleep(poll_interval)
 
         if not self.done():
             self.set_result(calc_node)
