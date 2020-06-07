@@ -132,7 +132,7 @@ class Runner:  # pylint: disable=too-many-public-methods
 
     def start(self):
         """Start the internal event loop."""
-        self._loop.start()
+        self._loop.run_forever()
 
     def stop(self):
         """Stop the internal event loop."""
