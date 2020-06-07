@@ -50,7 +50,7 @@ class TestWorkchain(AiidaTestCase):
         self.runner.call_on_calculation_finish(proc.node.pk, calc_done)
 
         # Run the calculation
-        self.runner.loop.add_callback(proc.step_until_terminated)
+        self.runner.loop.create_task(proc.step_until_terminated())
         self._run_loop_for(5.)
 
         self.assertTrue(future.result())
@@ -58,4 +58,4 @@ class TestWorkchain(AiidaTestCase):
     def _run_loop_for(self, seconds):
         loop = self.runner.loop
         loop.call_later(seconds, the_hans_klok_comeback, self.runner.loop)
-        loop.start()
+        loop.run_forever()
