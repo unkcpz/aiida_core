@@ -84,8 +84,7 @@ class Runner:  # pylint: disable=too-many-public-methods
         """
         Get the event loop of this runner
 
-        :return: the event loop
-        :rtype: :class:`tornado.ioloop.IOLoop`
+        :return: the asyncio event loop
         """
         return self._loop
 
@@ -179,7 +178,7 @@ class Runner:  # pylint: disable=too-many-public-methods
             process.close()
             self.controller.continue_process(process.pid, nowait=False, no_reply=True)
         else:
-            self.loop.add_callback(process.step_until_terminated)
+            self.loop.create_task(process.step_until_terminated())
 
         return process.node
 
@@ -195,7 +194,7 @@ class Runner:  # pylint: disable=too-many-public-methods
         assert not self._closed
 
         process = self.instantiate_process(process, *args, **inputs)
-        self.loop.add_callback(process.step_until_terminated)
+        self.loop.create_task(process.step_until_terminated())
         return process.node
 
     def _run(self, process, *args, **inputs):
@@ -284,6 +283,6 @@ class Runner:  # pylint: disable=too-many-public-methods
 
     def _poll_calculation(self, calc_node, callback):
         if calc_node.is_terminated:
-            self._loop.add_callback(callback, calc_node.pk)
+            self._loop.create_task(callback(calc_node.pk))
         else:
             self._loop.call_later(self._poll_interval, self._poll_calculation, calc_node, callback)
