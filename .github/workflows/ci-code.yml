@@ -98,7 +98,7 @@ jobs:
       run: |
         pip install --use-feature=2020-resolver -r requirements/requirements-py-${{ matrix.python-version }}.txt
         pip install --use-feature=2020-resolver --no-deps -e .
-        pip install --upgrade git+https://github.com/unkcpz/plumpy@fix/nest-asyncio-seperated
+        # pip install --upgrade git+https://github.com/unkcpz/plumpy@fix/nest-asyncio-seperated
         reentry scan
         pip freeze
 
