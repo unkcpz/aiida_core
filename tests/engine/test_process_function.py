@@ -163,6 +163,8 @@ class TestProcessFunction(AiidaTestCase):
 
     def test_source_code_attributes(self):
         """Verify function properties are properly introspected and stored in the nodes attributes and repository."""
+        import inspect
+
         function_name = 'test_process_function'
 
         @calcfunction
@@ -177,6 +179,9 @@ class TestProcessFunction(AiidaTestCase):
         # Verify that the function name is correct and the first source code linenumber is stored
         self.assertEqual(node.function_name, function_name)
         self.assertIsInstance(node.function_starting_line_number, int)
+
+        # Check the source code of the function is stored
+        self.assertEqual(node.get_function_source(), inspect.getsource(test_process_function))
 
         # Check that first line number is correct. Note that the first line should correspond
         # to the `@workfunction` directive, but since the list is zero-indexed we actually get the

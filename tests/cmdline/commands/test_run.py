@@ -48,6 +48,13 @@ class TestVerdiRun(AiidaTestCase):
                 print(node.pk)
             """
         )
+        function_source = textwrap.dedent(
+            """\
+            @workfunction
+            def wf():
+                pass
+            """
+        )
 
         # If `verdi run` is not setup correctly, the script above when run with `verdi run` will fail, because when
         # the engine will try to create the node for the workfunction and create a copy of its sourcefile, namely the
@@ -68,6 +75,7 @@ class TestVerdiRun(AiidaTestCase):
             self.assertTrue(isinstance(node, WorkFunctionNode))
             self.assertEqual(node.function_name, 'wf')
             self.assertEqual(node.get_function_source_code(), script_content)
+            self.assertEqual(node.get_function_source(), function_source)
 
 
 class TestAutoGroups(AiidaTestCase):

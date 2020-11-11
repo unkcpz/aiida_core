@@ -10,7 +10,9 @@
 """Mixin classes for ORM classes."""
 
 import inspect
+import warnings
 
+from aiida.common.warnings import AiidaDeprecationWarning
 from aiida.common import exceptions
 from aiida.common.lang import override
 from aiida.common.lang import classproperty
@@ -29,6 +31,7 @@ class FunctionCalculationMixin:
     FUNCTION_NAME_KEY = 'function_name'
     FUNCTION_NAMESPACE_KEY = 'function_namespace'
     FUNCTION_STARTING_LINE_KEY = 'function_starting_line_number'
+    FUNCTION_NUMBER_OF_LINES_KEY = 'function_number_of_lines'
     FUNCTION_SOURCE_FILE_PATH = 'source_file'
 
     def store_source_info(self, func):
@@ -43,8 +46,9 @@ class FunctionCalculationMixin:
         self._set_function_name(func.__name__)
 
         try:
-            _, starting_line_number = inspect.getsourcelines(func)
+            source_list, starting_line_number = inspect.getsourcelines(func)
             self._set_function_starting_line_number(starting_line_number)
+            self._set_function_number_of_lines(len(source_list))
         except (IOError, OSError):
             pass
 
@@ -105,13 +109,46 @@ class FunctionCalculationMixin:
         """
         self.set_attribute(self.FUNCTION_STARTING_LINE_KEY, function_starting_line_number)
 
-    def get_function_source_code(self):
-        """Return the content to the source file where the process function locate in the repository.
+    @property
+    def function_number_of_lines(self):
+        """Return the number of lines of the wrapped function in its source file.
 
-        :returns: the content of the source file where the process function locate in the repository,
-            or None if it does not exist
+        :returns: the number of lines or None
         """
+        return self.get_attribute(self.FUNCTION_NUMBER_OF_LINES_KEY, -1)
+
+    def _set_function_number_of_lines(self, function_number_of_lines):
+        """Set the number of lines of the wrapped function in its source file.
+
+        :param function_number_of_lines: the number of lines
+        """
+        self.set_attribute(self.FUNCTION_NUMBER_OF_LINES_KEY, function_number_of_lines)
+
+    def get_function_source_code(self):
+        """Return the content of the entire source file that contains the process function.
+
+        :returns: the content of the source file
+        """
+        warnings.warn(
+            'in the future this will return only the source of the function and'
+            ' please use `get_function_source_file` to get'
+            ' the entire content of the file instead', AiidaDeprecationWarning
+        )
         return self.get_object_content(self.FUNCTION_SOURCE_FILE_PATH)
+
+    def get_function_source(self):
+        """Return the source code of the function and only of the function.
+
+        :returns: the function source code.
+        """
+        content_list = self.get_function_source_code().splitlines()
+        start_line = self.function_starting_line_number
+        end_line = start_line + self.function_number_of_lines
+
+        # start_line - 1 to include the decorator
+        function_source = '\n'.join(content_list[start_line - 1:end_line])
+
+        return function_source
 
 
 class Sealable:
