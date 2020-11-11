@@ -106,9 +106,10 @@ class FunctionCalculationMixin:
         self.set_attribute(self.FUNCTION_STARTING_LINE_KEY, function_starting_line_number)
 
     def get_function_source_code(self):
-        """Return the absolute path to the source file in the repository.
+        """Return the content to the source file where the process function locate in the repository.
 
-        :returns: the absolute path of the source file in the repository, or None if it does not exist
+        :returns: the content of the source file where the process function locate in the repository,
+            or None if it does not exist
         """
         return self.get_object_content(self.FUNCTION_SOURCE_FILE_PATH)
 
