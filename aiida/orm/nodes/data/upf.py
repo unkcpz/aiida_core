@@ -209,26 +209,12 @@ def parse_upf(fname, check_filename=True):
         version = '1'
 
     parsed_data['version'] = version
-    try:
-        version_major = int(version.partition('.')[0])
-    except ValueError:
-        # If the version string does not contain a dot, fallback
-        # to version 1
-        AIIDA_LOGGER.debug(f'Falling back to version 1 for file {fname} version string {version} unrecognized')
-        version_major = 1
 
-    element = None
-    if version_major == 1:
-        match = REGEX_ELEMENT_V1.search(upf_contents)
-        if match:
-            element = match.group('element_name')
-    else:  # all versions > 1
-        match = REGEX_ELEMENT_V2.search(upf_contents)
-        if match:
-            element = match.group('element_name')
+    upf_dict = upf_to_json(upf_contents, fname)
 
-    if element is None:
-        raise ParsingError(f'Unable to find the element of UPF {fname}')
+    parsed_data.update(upf_dict['pseudo_potential']['header'])
+    element = parsed_data['element']
+
     element = element.capitalize()
     if element not in _valid_symbols:
         raise ParsingError(f'Unknown element symbol {element} for file {fname}')
@@ -239,8 +225,6 @@ def parse_upf(fname, check_filename=True):
                 '{1}, but the filename does not start '
                 'with {1}'.format(fname, element)
             )
-
-    parsed_data['element'] = element
 
     return parsed_data
 
@@ -299,7 +283,6 @@ class UpfData(SinglefileData):
 
     def store(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Store the node, reparsing the file so that the md5 and the element are correctly reset."""
-        from aiida.common.exceptions import ParsingError
         from aiida.common.files import md5_from_filelike
 
         if self.is_stored:
@@ -312,13 +295,17 @@ class UpfData(SinglefileData):
         with self.open(mode='rb') as handle:
             md5 = md5_from_filelike(handle)
 
-        try:
-            element = parsed_data['element']
-        except KeyError:
-            raise ParsingError(f'Could not parse the element from the UPF file {self.filename}')
-
-        self.set_attribute('element', str(element))
         self.set_attribute('md5', md5)
+
+        # try:
+        #     element = parsed_data['element']
+        # except KeyError:
+        #     raise ParsingError(f'Could not parse the element from the UPF file {self.filename}')
+        #
+        # self.set_attribute('element', str(element))
+
+        for key, value in parsed_data.items():
+            self.set_attribute(key, value)
 
         return super().store(*args, **kwargs)
 
