@@ -13,8 +13,9 @@ to access members of other classes via TAB-completable attributes
 (e.g. the class underlying `calculation.inputs` to allow to do `calculation.inputs.<label>`).
 """
 
+from aiida.common import AttributeDict
 from aiida.common.links import LinkType
-from aiida.common.exceptions import NotExistent, NotExistentAttributeError, NotExistentKeyError
+from aiida.common.exceptions import NotExistentAttributeError, NotExistentKeyError
 
 __all__ = ('NodeLinksManager', 'AttributeManager')
 
@@ -45,12 +46,53 @@ class NodeLinksManager:
         self._link_type = link_type
         self._incoming = incoming
 
+    def _construct_attribute_dict(self, incoming):
+        """
+        Construct an attribute dict to support nest namespace
+
+        :param incoming: if True, inspect incoming links, otherwise inspect
+            outgoing links
+        """
+
+        # pylint: disable=invalid-name
+
+        def _update_dict(d, u):
+            """update dict by another dict, update include all hierarchy
+            return the update dict instead of change the input dict"""
+            import collections.abc
+
+            for k, v in u.items():
+                if isinstance(v, collections.abc.Mapping):
+                    d[k] = _update_dict(d.get(k, {}), v)
+                else:
+                    d[k] = v
+            return d
+
+        if incoming:
+            links = self._node.get_incoming(link_type=self._link_type)
+        else:
+            links = self._node.get_outgoing(link_type=self._link_type)
+
+        node_attributes = links.all_link_labels()
+
+        attribute_dict = {}
+        for attribute in node_attributes:
+            value = links.get_node_by_label(attribute)
+            _update_dict(attribute_dict, {attribute: value})
+            nest_keys = attribute.split('__')
+            d = {nest_keys.pop(): value}
+            for key in reversed(nest_keys):
+                d = {key: d}
+
+            _update_dict(attribute_dict, d)
+
+        return AttributeDict(attribute_dict)
+
     def _get_keys(self):
         """Return the valid link labels, used e.g. to make getattr() work"""
-        if self._incoming:
-            node_attributes = self._node.get_incoming(link_type=self._link_type).all_link_labels()
-        else:
-            node_attributes = self._node.get_outgoing(link_type=self._link_type).all_link_labels()
+        attribute_dict = self._construct_attribute_dict(self._incoming)
+        node_attributes = attribute_dict.keys()
+
         return node_attributes
 
     def _get_node_by_link_label(self, label):
@@ -59,9 +101,9 @@ class NodeLinksManager:
 
         :param label: the link label connecting the current node to the node to get
         """
-        if self._incoming:
-            return self._node.get_incoming(link_type=self._link_type).get_node_by_label(label)
-        return self._node.get_outgoing(link_type=self._link_type).get_node_by_label(label)
+        attribute_dict = self._construct_attribute_dict(self._incoming)
+
+        return attribute_dict[label]
 
     def __dir__(self):
         """
@@ -81,7 +123,7 @@ class NodeLinksManager:
         """
         try:
             return self._get_node_by_link_label(label=name)
-        except NotExistent:
+        except KeyError:
             # Note: in order for TAB-completion to work, we need to raise an exception that also inherits from
             # `AttributeError`, so that `getattr(node.inputs, 'some_label', some_default)` returns `some_default`.
             # Otherwise, the exception is not caught by `getattr` and is propagated, instead of returning the default.
@@ -96,7 +138,7 @@ class NodeLinksManager:
         """
         try:
             return self._get_node_by_link_label(label=name)
-        except NotExistent:
+        except KeyError:
             # Note: in order for this class to behave as a dictionary, we raise an exception that also inherits from
             # `KeyError` - in this way, users can use the standard construct `try/except KeyError` and this will behave
             # like a standard dictionary.
